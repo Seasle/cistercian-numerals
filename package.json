@@ -1,0 +1,23 @@
+{
+    "name": "cistercian-numerals",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "tsc -w",
+        "build": "tsc -b"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Seasle/cistercian-numerals.git"
+    },
+    "keywords": [],
+    "author": "Seasle",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Seasle/cistercian-numerals/issues"
+    },
+    "homepage": "https://github.com/Seasle/cistercian-numerals#readme",
+    "devDependencies": {
+        "typescript": "^4.1.3"
+    }
+}
