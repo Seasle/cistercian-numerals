@@ -2,6 +2,8 @@ import { parseScheme } from './parser.js';
 import { createGlyph } from './glyph.js';
 import { GLYPH_ACTUAL_WIDTH, GLYPH_ACTUAL_HEIGHT, GLYPH_MIN_NUMBER, GLYPH_MAX_NUMBER } from './constants.js';
 const input = document.querySelector('input[type="text"]');
+const checkbox = document.querySelector('input[type="checkbox"]');
+const message = document.querySelector('.container__message');
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
 const store = {
@@ -64,7 +66,7 @@ const drawGlyph = (glyph) => {
     context.drawImage(image, 0, 0, image.width, image.height);
 };
 const update = () => {
-    if (store.number <= 1e6) {
+    if (store.number <= 1e7) {
         const size = canvas.parentElement.getBoundingClientRect();
         const glyphs = mergeGlyphs(numberToGlyphs(store.number));
         const columns = Math.min(glyphs.length, Math.floor(size.width / GLYPH_ACTUAL_WIDTH));
@@ -79,10 +81,18 @@ const update = () => {
                 context.save();
                 context.translate(x, y);
                 drawGlyph(glyph);
-                context.fillText(glyph.number.toString(), 0, GLYPH_ACTUAL_HEIGHT);
+                if (store.showNumbers) {
+                    context.textAlign = 'center';
+                    context.fillText(glyph.number.toString(), GLYPH_ACTUAL_WIDTH / 2, GLYPH_ACTUAL_HEIGHT - 5);
+                }
                 context.restore();
             });
         }
+        message.hidden = true;
+    }
+    else {
+        [canvas.width, canvas.height] = [0, 0];
+        message.hidden = false;
     }
 };
 const init = () => {
@@ -90,9 +100,15 @@ const init = () => {
         store.number = Number(input.value) || GLYPH_MIN_NUMBER;
         requestAnimationFrame(update);
     });
+    checkbox.addEventListener('input', () => {
+        store.showNumbers = checkbox.checked;
+        requestAnimationFrame(update);
+    });
     window.addEventListener('resize', () => {
         requestAnimationFrame(update);
     });
+    input.value = store.number.toString();
+    checkbox.checked = store.showNumbers;
     fetch('./assets/glyphs.json')
         .then(response => response.json())
         .then((data) => {

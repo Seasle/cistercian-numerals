@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html class="page" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cistercian Numerals</title>
+    <link rel="stylesheet" href="./src/styles/main.css">
+</head>
+<body class="page__body">
+    <div class="container">
+        <div class="container__controls">
+            <label class="control">
+                <span class="control__label">Десятичное число</span>
+                <input class="control__input" type="text">
+            </label>
+            <label class="inline-control">
+                <span class="inline-control__label">Показывать числа</span>
+                <input class="inline-control__input" type="checkbox">
+            </label>
+        </div>
+        <div class="container__view">
+            <p class="container__message" hidden>Число больше 1 000 000!</p>
+            <canvas></canvas>
+        </div>
+    </div>
+    <script type="module" src="./dist/scripts/main.js"></script>
+</body>
+</html>

@@ -1,4 +1,13 @@
-body {
+:root {
+    --primary-color: #40a361;
+}
+
+.page {
+    font-size: 16px;
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+}
+
+.page__body {
     margin: 0;
     overflow: hidden;
 }
@@ -13,11 +22,76 @@ canvas {
     grid-template-rows: max-content 1fr;
 }
 
-.container__controls {}
+.container__controls {
+    padding: 24px;
+    gap: 24px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    justify-content: center;
+}
 
 .container__view {
     display: flex;
     justify-content: center;
     align-items: start;
     overflow: hidden auto;
+}
+
+.container__message {
+    margin: 0;
+    font-size: 20px;
+}
+
+.control,
+.inline-control {
+    --label-height: 1em;
+    --gap: 8px;
+    --color: #000000;
+
+    gap: var(--gap);
+    display: grid;
+}
+
+.control:focus-within,
+.inline-control:focus-within {
+    --color: var(--primary-color);
+}
+
+.control__label,
+.inline-control__label {
+    line-height: 1;
+    color: var(--color);
+}
+
+.control {
+    grid-template-rows: repeat(2, max-content);
+}
+
+.control__input {
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid var(--color);
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.control__input:focus {
+    outline: none;
+    box-shadow: 0 1px 0 var(--color);
+}
+
+.inline-control {
+    margin-top: calc(var(--label-height) + var(--gap));
+    grid-template-columns: repeat(2, max-content);
+    align-items: center;
+}
+
+.inline-control__input {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.inline-control__input:focus {
+    outline: none;
 }

@@ -3,9 +3,11 @@ import { createGlyph } from './glyph.js';
 import { GLYPH_ACTUAL_WIDTH, GLYPH_ACTUAL_HEIGHT, GLYPH_MIN_NUMBER, GLYPH_MAX_NUMBER } from './constants.js';
 import { IStore, IRawGlyph, IParsedGlyph } from './types';
 
-const input = document.querySelector('input[type="text"]');
-const canvas = document.querySelector('canvas');
-const context = canvas!.getContext('2d');
+const input = document.querySelector<HTMLInputElement>('input[type="text"]')!;
+const checkbox = document.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+const message = document.querySelector<HTMLParagraphElement>('.container__message')!;
+const canvas = document.querySelector<HTMLCanvasElement>('canvas')!;
+const context = canvas.getContext('2d')!;
 
 const store: IStore = {
     glyphs: [],
@@ -78,7 +80,7 @@ const drawGlyph = (glyph: IParsedGlyph) => {
     }
 
     const image = store.cache.get(glyph.number);
-    context!.drawImage(
+    context.drawImage(
         image!,
         0,
         0,
@@ -88,8 +90,8 @@ const drawGlyph = (glyph: IParsedGlyph) => {
 };
 
 const update = () => {
-    if (store.number <= 1e6) {
-        const size = canvas!.parentElement!.getBoundingClientRect();
+    if (store.number <= 1e7) {
+        const size = canvas.parentElement!.getBoundingClientRect();
         const glyphs = mergeGlyphs(numberToGlyphs(store.number));
         const columns = Math.min(
             glyphs.length,
@@ -98,28 +100,43 @@ const update = () => {
         if (columns > 0) {
             const rows = Math.ceil(glyphs.length / columns);
 
-            [canvas!.width, canvas!.height] = [GLYPH_ACTUAL_WIDTH * columns, GLYPH_ACTUAL_HEIGHT * rows];
+            [canvas.width, canvas.height] = [GLYPH_ACTUAL_WIDTH * columns, GLYPH_ACTUAL_HEIGHT * rows];
 
-            context!.clearRect(0, 0, canvas!.width, canvas!.height);
+            context.clearRect(0, 0, canvas.width, canvas.height);
 
             glyphs.forEach((glyph, index) => {
                 const line = Math.floor(index / columns);
                 const x = GLYPH_ACTUAL_WIDTH * (index - line * columns);
                 const y = GLYPH_ACTUAL_HEIGHT * line;
 
-                context!.save();
-                context!.translate(x, y);
+                context.save();
+                context.translate(x, y);
                 drawGlyph(glyph);
-                context!.fillText(glyph.number.toString(), 0, GLYPH_ACTUAL_HEIGHT);
-                context!.restore();
+                if (store.showNumbers) {
+                    context.textAlign = 'center';
+                    context.fillText(glyph.number.toString(), GLYPH_ACTUAL_WIDTH / 2, GLYPH_ACTUAL_HEIGHT - 5);
+                }
+                context.restore();
             });
         }
+
+        message.hidden = true;
+    } else {
+        [canvas.width, canvas.height] = [0, 0];
+
+        message.hidden = false;
     }
 };
 
 const init = () => {
-    input!.addEventListener('input', () => {
-        store.number = Number((input as HTMLInputElement).value) || GLYPH_MIN_NUMBER;
+    input.addEventListener('input', () => {
+        store.number = Number(input.value) || GLYPH_MIN_NUMBER;
+
+        requestAnimationFrame(update);
+    });
+
+    checkbox.addEventListener('input', () => {
+        store.showNumbers = checkbox.checked;
 
         requestAnimationFrame(update);
     });
@@ -127,6 +144,9 @@ const init = () => {
     window.addEventListener('resize', () => {
         requestAnimationFrame(update);
     });
+
+    input.value = store.number.toString();
+    checkbox.checked = store.showNumbers;
 
     fetch('./assets/glyphs.json')
         .then(response => response.json())
